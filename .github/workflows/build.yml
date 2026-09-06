@@ -161,10 +161,11 @@ jobs:
             adb push bash-bin/printenv /data/local/tmp/tests/
             adb push bash-bin/xcase /data/local/tmp/tests/
             adb shell chmod 755 /data/local/tmp/bash /data/local/tmp/tests/recho /data/local/tmp/tests/zecho /data/local/tmp/tests/printenv /data/local/tmp/tests/xcase
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/tmp|/data/local/tmp|g" run-* *.tests *.sub *.right'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub *.right'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/echo|/data/local/tmp/bin/echo|g" run-* *.tests *.sub *.right'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/rm|/data/local/tmp/bin/rm|g" run-* *.tests *.sub *.right'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/cat|/data/local/tmp/bin/cat|g" run-* *.tests *.sub *.right'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/data/local/tmp/bash|../bash|g" *.right'
-            adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all'
+            adb shell '
+              export PATH=/data/local/tmp/bin:$PATH
+              export TMPDIR=/data/local/tmp
+              cd /data/local/tmp/tests
+              busybox find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.right" \) -exec busybox sed -i "s|/tmp|/data/local/tmp|g; s|/bin/sh|/system/bin/sh|g; s|/bin/echo|/data/local/tmp/bin/echo|g; s|/bin/rm|/data/local/tmp/bin/rm|g; s|/bin/cat|/data/local/tmp/bin/cat|g" {} +
+              busybox sed -i "s|/data/local/tmp/bash|../bash|g" *.right
+              ../bash run-all < /dev/null
+            '
