@@ -44,7 +44,7 @@ jobs:
           cd bash-src
           shopt -s nullglob
           for p in ../patches/*.patch; do
-            patch -p1 < "$p"
+            patch -p0 < "$p"
           done
 
       - name: Build Bash
