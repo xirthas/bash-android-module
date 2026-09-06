@@ -16,18 +16,18 @@ jobs:
             target: aarch64-linux-android
             host: aarch64-linux-android
             api: 21
-          # - arch: arm
-          #   target: armv7a-linux-androideabi
-          #   host: arm-linux-androideabi
-          #   api: 21
-          # - arch: x86_64
-          #   target: x86_64-linux-android
-          #   host: x86_64-linux-android
-          #   api: 21
-          # - arch: x86
-          #   target: i686-linux-android
-          #   host: i686-linux-android
-          #   api: 21
+          - arch: arm
+            target: armv7a-linux-androideabi
+            host: arm-linux-androideabi
+            api: 21
+          - arch: x86_64
+            target: x86_64-linux-android
+            host: x86_64-linux-android
+            api: 21
+          - arch: x86
+            target: i686-linux-android
+            host: i686-linux-android
+            api: 21
 
     steps:
       - name: Checkout repository
@@ -110,7 +110,7 @@ jobs:
 
   test:
     needs: build
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -121,19 +121,18 @@ jobs:
           tar -xzf bash-5.2.tar.gz
           mv bash-5.2/tests ./tests
 
-      - name: Download Artifact (aarch64)
+      - name: Download Artifact (x86_64)
         uses: actions/download-artifact@v4
         with:
-          name: bash-aarch64
+          name: bash-x86_64
           path: bash-bin
 
       - name: Run tests in Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: google_apis
-          arch: arm64-v8a
-          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
+          api-level: 21
+          target: default
+          arch: x86_64
           script: |
             adb push bash-bin/bash /data/local/tmp/
             adb push tests /data/local/tmp/
