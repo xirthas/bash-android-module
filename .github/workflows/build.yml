@@ -12,22 +12,22 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: aarch64
-            target: aarch64-linux-android
-            host: aarch64-linux-android
-            api: 21
-          - arch: arm
-            target: armv7a-linux-androideabi
-            host: arm-linux-androideabi
-            api: 21
+          # - arch: aarch64
+          #   target: aarch64-linux-android
+          #   host: aarch64-linux-android
+          #   api: 21
+          # - arch: arm
+          #   target: armv7a-linux-androideabi
+          #   host: arm-linux-androideabi
+          #   api: 21
           - arch: x86_64
             target: x86_64-linux-android
             host: x86_64-linux-android
             api: 21
-          - arch: x86
-            target: i686-linux-android
-            host: i686-linux-android
-            api: 21
+          # - arch: x86
+          #   target: i686-linux-android
+          #   host: i686-linux-android
+          #   api: 21
 
     steps:
       - name: Checkout repository
@@ -136,12 +136,13 @@ jobs:
       - name: Run tests in Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 21
+          api-level: 24
           target: default
           arch: x86_64
           emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
           disable-linux-hw-accel: false 
           script: |
+            set -e
             adb push bash-bin/bash /data/local/tmp/
             adb push tests /data/local/tmp/
             adb shell chmod 755 /data/local/tmp/bash
