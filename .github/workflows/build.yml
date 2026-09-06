@@ -143,7 +143,13 @@ jobs:
           disable-linux-hw-accel: false 
           script: |
             set -e
+            curl -sL -o busybox https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
+            adb shell mkdir -p /data/local/tmp/bin
+            adb push busybox /data/local/tmp/bin/
+            adb shell chmod 755 /data/local/tmp/bin/busybox
+            adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
             adb push bash-bin/bash /data/local/tmp/
             adb push tests /data/local/tmp/
             adb shell chmod 755 /data/local/tmp/bash
-            adb shell "cd /data/local/tmp/tests && ../bash run-all"
+            adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|/tmp|/data/local/tmp|g" run-* *.tests'
+            adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all'
