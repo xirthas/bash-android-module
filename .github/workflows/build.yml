@@ -170,7 +170,7 @@ jobs:
             adb push bash-bin/xcase /data/local/tmp/tests/
             adb shell chmod 755 /data/local/tmp/tests/bash /data/local/tmp/tests/recho /data/local/tmp/tests/zecho /data/local/tmp/tests/printenv /data/local/tmp/tests/xcase
 
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/tmp(?!-)|/data/local/tmp|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell "cd /data/local/tmp/tests && sed -i -E 's|/tmp(\b\|/\|$)|/data/local/tmp\1|g' run-* *.tests *.sub *.right execscript history.list misc/*.tests"
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/echo|/data/local/tmp/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/rm|/data/local/tmp/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
@@ -178,6 +178,7 @@ jobs:
 
             adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/passwd'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|ln sh a|cp sh a|g" rsh2.sub'
 
             adb shell 'touch /data/local/tmp/dummy_tty && chmod 666 /data/local/tmp/dummy_tty'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/dev/tty|/data/local/tmp/dummy_tty|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
