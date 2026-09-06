@@ -1,0 +1,85 @@
+name: Build Static Bash for Android
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: aarch64
+            target: aarch64-linux-android
+            host: aarch64-linux-android
+            api: 21
+          - arch: arm
+            target: armv7a-linux-androideabi
+            host: arm-linux-androideabi
+            api: 21
+          - arch: x86_64
+            target: x86_64-linux-android
+            host: x86_64-linux-android
+            api: 21
+          - arch: x86
+            target: i686-linux-android
+            host: i686-linux-android
+            api: 21
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Bash source
+        run: |
+          curl -O https://ftp.gnu.org/gnu/bash/bash-5.2.tar.gz
+          tar -xzf bash-5.2.tar.gz
+          mv bash-5.2 bash-src
+
+      - name: Apply patches
+        run: |
+          cd bash-src
+          shopt -s nullglob
+          for p in ../patches/*.patch; do
+            patch -p1 < "$p"
+          done
+
+      - name: Build Bash
+        env:
+          TARGET: ${{ matrix.target }}
+          HOST: ${{ matrix.host }}
+          API: ${{ matrix.api }}
+        run: |
+          cd bash-src
+          
+          TOOLCHAIN=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64
+          
+          export AR=$TOOLCHAIN/bin/llvm-ar
+          export CC=$TOOLCHAIN/bin/${TARGET}${API}-clang
+          export AS=$CC
+          export CXX=$TOOLCHAIN/bin/${TARGET}${API}-clang++
+          export LD=$TOOLCHAIN/bin/ld
+          export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
+          export STRIP=$TOOLCHAIN/bin/llvm-strip
+          
+          export CFLAGS="-static -O2"
+          export LDFLAGS="-static"
+
+          ./configure \
+            --host=${HOST} \
+            --enable-static-link \
+            --without-bash-malloc \
+            bash_cv_dev_fd=whacky \
+            bash_cv_getcwd_malloc=yes
+
+          make -j$(nproc)
+          $STRIP bash
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bash-${{ matrix.arch }}
+          path: bash-src/bash
