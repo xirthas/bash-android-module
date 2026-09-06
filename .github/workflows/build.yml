@@ -68,18 +68,40 @@ jobs:
           export CFLAGS="-static -O2 -Wno-error=implicit-function-declaration"
           export LDFLAGS="-static"
 
+          sed -i 's/-rdynamic//g' configure
+          sed -i '/strtoimax/Id' configure
+          sed -i '/strtoimax/d' Makefile.in
+          sed -i -e 's/strtoimax.c strtoumax.c/strtoumax.c/' -e '/strtoimax/d' lib/sh/Makefile.in
+          rm -f m4/strtoimax.m4 lib/sh/strtoimax.c
+
           ./configure \
             --host=${HOST} \
             --enable-static-link \
+            --disable-nls \
             --without-bash-malloc \
+            --enable-largefile \
+            --enable-alias \
+            --enable-readline \
+            --enable-history \
+            --enable-multibyte \
+            --enable-job-control \
+            --enable-array-variables \
             bash_cv_dev_fd=whacky \
             bash_cv_getcwd_malloc=yes \
+            bash_cv_job_control_missing=present \
+            bash_cv_sys_siglist=yes \
+            bash_cv_func_sigsetjmp=present \
+            bash_cv_unusable_rtsigs=no \
             ac_cv_func_getpwent=no \
             ac_cv_func_endpwent=no \
-            ac_cv_func_setpwent=no
+            ac_cv_func_setpwent=no \
+            ac_cv_func_strchrnul=no \
+            ac_cv_func_mbsnrtowcs=no
 
-          # make -j$(nproc)
-          make
+          sed -i 's/${LIBOBJDIR}strtoimax$U.o//g' lib/sh/Makefile
+          sed -i 's/strtoimax\.o//g' lib/sh/Makefile
+
+          make -j$(nproc)
           $STRIP bash
 
       - name: Upload Artifact
