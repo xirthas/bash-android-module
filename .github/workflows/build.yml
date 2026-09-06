@@ -78,7 +78,8 @@ jobs:
             ac_cv_func_endpwent=no \
             ac_cv_func_setpwent=no
 
-          make -j$(nproc)
+          # make -j$(nproc)
+          make
           $STRIP bash
 
       - name: Upload Artifact
