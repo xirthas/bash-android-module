@@ -65,7 +65,7 @@ jobs:
           export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
           export STRIP=$TOOLCHAIN/bin/llvm-strip
           
-          export CFLAGS="-static -O2"
+          export CFLAGS="-static -O2 -Wno-error=implicit-function-declaration"
           export LDFLAGS="-static"
 
           ./configure \
@@ -73,7 +73,10 @@ jobs:
             --enable-static-link \
             --without-bash-malloc \
             bash_cv_dev_fd=whacky \
-            bash_cv_getcwd_malloc=yes
+            bash_cv_getcwd_malloc=yes \
+            ac_cv_func_getpwent=no \
+            ac_cv_func_endpwent=no \
+            ac_cv_func_setpwent=no
 
           make -j$(nproc)
           $STRIP bash
