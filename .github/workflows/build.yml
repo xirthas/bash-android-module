@@ -100,13 +100,19 @@ jobs:
           sed -i 's/${LIBOBJDIR}mbschr$U.o ${LIBOBJDIR}strtoimax$U.o/${LIBOBJDIR}mbschr$U.o/' lib/sh/Makefile
 
           make -j$(nproc)
+          make recho zecho printenv xcase
           $STRIP bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: bash-${{ matrix.arch }}
-          path: bash-src/bash
+          path: |
+            bash-src/bash
+            bash-src/recho
+            bash-src/zecho
+            bash-src/printenv
+            bash-src/xcase
 
   test:
     needs: build
@@ -149,7 +155,12 @@ jobs:
             adb shell chmod 755 /data/local/tmp/bin/busybox
             adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
             adb push bash-bin/bash /data/local/tmp/
+            adb push bash-bin/recho /data/local/tmp/
+            adb push bash-bin/zecho /data/local/tmp/
+            adb push bash-bin/printenv /data/local/tmp/
+            adb push bash-bin/xcase /data/local/tmp/
             adb push tests /data/local/tmp/
-            adb shell chmod 755 /data/local/tmp/bash
+            adb shell chmod 755 /data/local/tmp/bash /data/local/tmp/recho /data/local/tmp/zecho /data/local/tmp/printenv /data/local/tmp/xcase
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|/tmp|/data/local/tmp|g" run-* *.tests'
+            adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub'
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all'
