@@ -170,7 +170,7 @@ jobs:
             adb push bash-bin/xcase /data/local/tmp/tests/
             adb shell chmod 755 /data/local/tmp/tests/bash /data/local/tmp/tests/recho /data/local/tmp/tests/zecho /data/local/tmp/tests/printenv /data/local/tmp/tests/xcase
 
-            adb shell 'cd /data/local/tmp/tests && sed -i -E -e "s|/tmp([^-._])|/data/local/tmp\1|g" -e "s|/tmp$|/data/local/tmp|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i -E -e "s@(^|[^a-zA-Z0-9._-])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" -e "s@(^|[^a-zA-Z0-9._-])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/echo|/data/local/tmp/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/rm|/data/local/tmp/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
@@ -180,4 +180,4 @@ jobs:
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|ln sh a|cp sh a|g" rsh2.sub'
 
-            adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; export THIS_SH=/system/bin/sh; cd /data/local/tmp/tests && ../bash run-all' < /dev/null
+            adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all' < /dev/null
