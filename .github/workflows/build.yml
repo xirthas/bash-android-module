@@ -180,7 +180,4 @@ jobs:
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|ln sh a|cp sh a|g" rsh2.sub'
 
-            adb shell 'touch /data/local/tmp/dummy_tty && chmod 666 /data/local/tmp/dummy_tty'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/dev/tty|/data/local/tmp/dummy_tty|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
-
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all' < /dev/null
