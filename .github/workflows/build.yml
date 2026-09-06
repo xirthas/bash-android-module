@@ -142,7 +142,7 @@ jobs:
       - name: Run tests in Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 24
+          api-level: 33
           target: default
           arch: x86_64
           emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
