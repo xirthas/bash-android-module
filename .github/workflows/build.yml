@@ -144,5 +144,5 @@ jobs:
           script: |
             adb push bash-bin/bash /data/local/tmp/
             adb push tests /data/local/tmp/
-            adb shell chmod +x /data/local/tmp/bash
+            adb shell chmod 755 /data/local/tmp/bash
             adb shell "cd /data/local/tmp/tests && ../bash runall"
