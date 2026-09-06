@@ -163,4 +163,5 @@ jobs:
             adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|/tmp|/data/local/tmp|g" run-* *.tests'
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub'
+            adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|PATH=/|PATH=/data/local/tmp/bin:/|g" run-* *.tests *.sub'
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all'
