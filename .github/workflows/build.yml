@@ -153,7 +153,6 @@ jobs:
             adb shell mkdir -p /data/local/tmp/bin
             adb push busybox /data/local/tmp/bin/
             adb shell chmod 755 /data/local/tmp/bin/busybox
-            adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
             adb push bash-bin/bash /data/local/tmp/
             adb push bash-bin/recho /data/local/tmp/bin/
             adb push bash-bin/zecho /data/local/tmp/bin/
@@ -161,6 +160,7 @@ jobs:
             adb push bash-bin/xcase /data/local/tmp/bin/
             adb push tests /data/local/tmp/
             adb shell chmod 755 /data/local/tmp/bash /data/local/tmp/bin/recho /data/local/tmp/bin/zecho /data/local/tmp/bin/printenv /data/local/tmp/bin/xcase
+            adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|/tmp|/data/local/tmp|g" run-* *.tests'
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub'
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all'
