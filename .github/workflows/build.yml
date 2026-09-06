@@ -69,7 +69,6 @@ jobs:
           export LDFLAGS="-static"
 
           sed -i 's/-rdynamic//g' configure
-          sed -i '/strtoimax/Id' configure
           sed -i '/strtoimax/d' Makefile.in
           sed -i -e 's/strtoimax.c strtoumax.c/strtoumax.c/' -e '/strtoimax/d' lib/sh/Makefile.in
           rm -f m4/strtoimax.m4 lib/sh/strtoimax.c
@@ -98,8 +97,7 @@ jobs:
             ac_cv_func_strchrnul=no \
             ac_cv_func_mbsnrtowcs=no
 
-          sed -i 's/${LIBOBJDIR}strtoimax$U.o//g' lib/sh/Makefile
-          sed -i 's/strtoimax\.o//g' lib/sh/Makefile
+          sed -i 's/${LIBOBJDIR}mbschr$U.o ${LIBOBJDIR}strtoimax$U.o/${LIBOBJDIR}mbschr$U.o/' lib/sh/Makefile
 
           make -j$(nproc)
           $STRIP bash
