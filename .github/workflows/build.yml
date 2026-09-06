@@ -16,18 +16,18 @@ jobs:
             target: aarch64-linux-android
             host: aarch64-linux-android
             api: 21
-          # - arch: arm
-          #   target: armv7a-linux-androideabi
-          #   host: arm-linux-androideabi
-          #   api: 21
-          # - arch: x86_64
-          #   target: x86_64-linux-android
-          #   host: x86_64-linux-android
-          #   api: 21
-          # - arch: x86
-          #   target: i686-linux-android
-          #   host: i686-linux-android
-          #   api: 21
+          - arch: arm
+            target: armv7a-linux-androideabi
+            host: arm-linux-androideabi
+            api: 21
+          - arch: x86_64
+            target: x86_64-linux-android
+            host: x86_64-linux-android
+            api: 21
+          - arch: x86
+            target: i686-linux-android
+            host: i686-linux-android
+            api: 21
 
     steps:
       - name: Checkout repository
@@ -107,3 +107,34 @@ jobs:
         with:
           name: bash-${{ matrix.arch }}
           path: bash-src/bash
+
+  test:
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Bash source for tests
+        run: |
+          curl -O https://ftp.gnu.org/gnu/bash/bash-5.2.tar.gz
+          tar -xzf bash-5.2.tar.gz
+          mv bash-5.2/tests ./tests
+
+      - name: Download Artifact (x86_64)
+        uses: actions/download-artifact@v4
+        with:
+          name: bash-x86_64
+          path: bash-bin
+
+      - name: Run tests in Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 21
+          target: default
+          arch: x86_64
+          script: |
+            adb push bash-bin/bash /data/local/tmp/
+            adb push tests /data/local/tmp/
+            adb shell chmod +x /data/local/tmp/bash
+            adb shell "cd /data/local/tmp/tests && ../bash runall"
