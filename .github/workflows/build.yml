@@ -130,7 +130,7 @@ jobs:
       - name: Run tests in Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 21
+          api-level: 28
           target: default
           arch: arm64-v8a
           script: |
