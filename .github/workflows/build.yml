@@ -156,8 +156,6 @@ jobs:
             adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
             adb push tests /data/local/tmp/
 
-            adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/passwd'
-
             adb push bash-bin/bash /data/local/tmp/
             adb push bash-bin/recho /data/local/tmp/
             adb push bash-bin/zecho /data/local/tmp/
@@ -177,6 +175,9 @@ jobs:
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/echo|/data/local/tmp/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/rm|/data/local/tmp/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/cat|/data/local/tmp/bin/cat|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+
+            adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/passwd'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/dev/tty|/dev/null|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
 
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all' < /dev/null
