@@ -178,5 +178,6 @@ jobs:
 
             adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/passwd'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/dev/tty|/proc/self/fd/0|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
 
-            adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && /data/local/tmp/bin/busybox script -q -c "../bash run-all" /dev/null'
+            adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; cd /data/local/tmp/tests && ../bash run-all' < /dev/null
