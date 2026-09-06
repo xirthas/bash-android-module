@@ -170,7 +170,7 @@ jobs:
             adb push bash-bin/xcase /data/local/tmp/tests/
             adb shell chmod 755 /data/local/tmp/tests/bash /data/local/tmp/tests/recho /data/local/tmp/tests/zecho /data/local/tmp/tests/printenv /data/local/tmp/tests/xcase
 
-            adb shell 'cd /data/local/tmp/tests && sed -i -E -e "s@(^|[^a-zA-Z0-9._-])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" -e "s@(^|[^a-zA-Z0-9._-])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i -E -e "s@(^|[^a-zA-Z0-9._-])/tmp([^a-zA-Z0-9._]|$)@\1/data/local/tmp\2@g" -e "s@(^|[^a-zA-Z0-9._])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/echo|/data/local/tmp/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/rm|/data/local/tmp/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
