@@ -158,7 +158,31 @@ jobs:
             adb wait-for-device
             adb shell setenforce 0
 
-            # 2. Создаем изолированную структуру в fake_root
+            # 2. АВТОПОВТОР СИСТЕМНОГО КОРНЯ В FAKE_ROOT
+            # Создаем fake_root, если его нет
+            adb shell mkdir -p /data/local/tmp/fake_root
+
+            # Проходим по всем элементам реального корня Android и прокидываем ссылки/папки,
+            # игнорируя те, которые мы заменим на ПК-структуру
+            adb shell '
+              for item in /.* /*; do
+                name=$(basename "$item")
+                # Пропускаем служебные точки, а также наши будущие ПК-папки
+                if [ "$name" = "." ] || [ "$name" = ".." ] || \
+                   [ "$name" = "bin" ] || [ "$name" = "sbin" ] || \
+                   [ "$name" = "etc" ] || [ "$name" = "tmp" ] || \
+                   [ "$name" = "var" ] || [ "$name" = "usr" ] || \
+                   [ "$name" = "dev" ] || [ "$name" = "proc" ] || \
+                   [ "$name" = "sys" ]; then
+                  continue
+                fi
+                
+                # Создаем символическую ссылку на оригинальный элемент Android внутри fake_root
+                ln -sf "$item" "/data/local/tmp/fake_root/$name"
+              done
+            '
+
+            # 3. Создаем НАШИ кастомные изолированные папки под структуру Linux-ПК
             adb shell mkdir -p /data/local/tmp/fake_root/usr/bin
             adb shell mkdir -p /data/local/tmp/fake_root/bin
             adb shell mkdir -p /data/local/tmp/fake_root/sbin
@@ -166,41 +190,39 @@ jobs:
             adb shell mkdir -p /data/local/tmp/fake_root/tmp
             adb shell mkdir -p /data/local/tmp/fake_root/var
             
-            # Системные папки ядра, необходимые для работы bash/busybox
+            # Системные папки ядра (их линковать нельзя, только монтировать)
             adb shell mkdir -p /data/local/tmp/fake_root/dev
             adb shell mkdir -p /data/local/tmp/fake_root/proc
             adb shell mkdir -p /data/local/tmp/fake_root/sys
 
-            # 3. Выставляем права доступа
+            # 4. Выставляем права доступа
             adb shell chmod 755 /data/local/tmp/fake_root/usr
             adb shell chmod 755 /data/local/tmp/fake_root/usr/bin
             adb shell chmod 755 /data/local/tmp/fake_root/etc
             adb shell chmod 777 /data/local/tmp/fake_root/tmp
             adb shell chmod 755 /data/local/tmp/fake_root/var
 
-            # 4. Монтируем виртуальные окружения Android внутрь нашего chroot
-            # Без этого внутри chroot не будут работать базовые функции ОС
+            # 5. Монтируем виртуальные окружения Android внутрь нашего chroot
             adb shell mount -t devtmpfs udev /data/local/tmp/fake_root/dev || adb shell mount --bind /dev /data/local/tmp/fake_root/dev
             adb shell mount -t proc proc /data/local/tmp/fake_root/proc
             adb shell mount -t sysfs sysfs /data/local/tmp/fake_root/sys
 
-            # 5. Создаем СИМВОЛИЧЕСКИЕ ссылки внутри изолированного корня
-            # Переходим в директорию fake_root, чтобы ссылки создались относительно неё
+            # 6. Создаем СИМВОЛИЧЕСКИЕ ссылки внутри изолированного ПК-корня (как на настоящем Linux)
             adb shell "cd /data/local/tmp/fake_root && rm -rf bin sbin && ln -s usr/bin bin && ln -s usr/bin sbin"
 
-            # 6. Записываем passwd внутрь изолированного /etc
+            # 7. Записываем passwd внутрь изолированного /etc (добавляем и root, и shell с UID 2000)
             adb shell "echo 'root:x:0:0:root:/root:/bin/sh' > /data/local/tmp/fake_root/etc/passwd"
             adb shell "echo 'shell:x:2000:2000:shell:/tmp:/bin/sh' >> /data/local/tmp/fake_root/etc/passwd"
             adb shell chmod 644 /data/local/tmp/fake_root/etc/passwd
 
-            # 7. Загружаем BusyBox напрямую в изолированный /usr/bin/
+            # 8. Загружаем BusyBox напрямую в изолированный /usr/bin/
             adb push busybox /data/local/tmp/fake_root/usr/bin/busybox
             adb shell chmod 755 /data/local/tmp/fake_root/usr/bin/busybox
             
-            # Устанавливаем все стандартные утилиты Linux (ls, grep, awk) внутри chroot
+            # Устанавливаем все стандартные утилиты Linux (ls, grep, awk) внутрь chroot
             adb shell "chroot /data/local/tmp/fake_root /usr/bin/busybox --install -s /usr/bin"
 
-            # 8. Загружаем Bash и тестовые бинарники в изолированный /usr/bin/
+            # 9. Загружаем Bash и тестовые бинарники в изолированный /usr/bin/
             adb push bash-bin/bash /data/local/tmp/fake_root/usr/bin/
             adb push bash-bin/recho /data/local/tmp/fake_root/usr/bin/
             adb push bash-bin/zecho /data/local/tmp/fake_root/usr/bin/
@@ -208,16 +230,14 @@ jobs:
             adb push bash-bin/xcase /data/local/tmp/fake_root/usr/bin/
             adb shell chmod 755 /data/local/tmp/fake_root/usr/bin/bash /data/local/tmp/fake_root/usr/bin/recho /data/local/tmp/fake_root/usr/bin/zecho /data/local/tmp/fake_root/usr/bin/printenv /data/local/tmp/fake_root/usr/bin/xcase
 
-            # 9. Загружаем тесты и запускающий скрипт внутрь изолированной среды
+            # 10. Загружаем тесты и запускающий скрипт внутрь изолированной среды
             adb shell mkdir -p /data/local/tmp/fake_root/tests
             adb push tests /data/local/tmp/fake_root/
             adb shell chmod -R 777 /data/local/tmp/fake_root/tests
 
-            # Сам запускаемый скрипт кладем в корень изолированной среды
+            # Сам запускаемый скрипт в корень изолированной среды
             adb push .github/run-tests-android.sh /data/local/tmp/fake_root/run-tests-android.sh
             adb shell chmod 755 /data/local/tmp/fake_root/run-tests-android.sh
 
-            # 10. ЗАПУСК ТЕСТОВ
-            # Команда chroot заставляет Android считать папку fake_root корнем "/"
-            # Скрипт run-tests-android.sh увидит идеальную ПК-структуру: /bin/bash, /etc/passwd и т.д.
+            # 11. ЗАПУСК ТЕСТОВ
             adb shell "chroot /data/local/tmp/fake_root /usr/bin/sh /run-tests-android.sh"
