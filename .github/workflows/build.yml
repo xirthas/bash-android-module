@@ -206,11 +206,11 @@ jobs:
             #adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/cat|/data/local/tmp/bin/cat|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             #adb shell 'cd /data/local/tmp/tests && sed -i "s|/usr/bin/printf|/system/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
 
-            sed -i "s|/data/local/tmp/bin/sh|/system/bin/sh|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
-            sed -i "s|/data/local/tmp/bin/echo|/system/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
-            sed -i "s|/data/local/tmp/bin/rm|/system/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
-            sed -i "s|/data/local/tmp/bin/cat|/system/bin/cat|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
-            sed -i "s|/data/local/tmp/usr/bin/printf|/system/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/data/local/tmp/bin/sh|/system/bin/sh|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/data/local/tmp/bin/echo|/system/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/data/local/tmp/bin/rm|/system/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/data/local/tmp/bin/cat|/system/bin/cat|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/data/local/tmp/usr/bin/printf|/system/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
 
             adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/etc/passwd'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|ln sh a|cp sh a|g" rsh2.sub'
