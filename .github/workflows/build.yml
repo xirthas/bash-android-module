@@ -162,8 +162,8 @@ jobs:
 
             # Create temp folder structure
             adb shell mkdir -p /data/local/tmp/usr/bin
-            ln -s /data/local/tmp/usr/bin /data/local/tmp/bin
-            ln -s /data/local/tmp/usr/bin /data/local/tmp/sbin
+            adb shell ln -s /data/local/tmp/usr/bin /data/local/tmp/bin
+            adb shell ln -s /data/local/tmp/usr/bin /data/local/tmp/sbin
             adb shell mkdir -p /data/local/tmp/etc
 
             # Push bin and tests
