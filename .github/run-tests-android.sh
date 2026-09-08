@@ -7,9 +7,10 @@ find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.
     -e ":a" \
     -e "s@(^|[^a-zA-Z0-9._])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" \
     -e "s@(^|[^a-zA-Z0-9._])/bin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/bin\2@g" \
+    -e "s@(^|[^a-zA-Z0-9._])/sbin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/sbin\2@g" \
     -e "s@(^|[^a-zA-Z0-9._])/etc([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/etc\2@g" \
     -e "s@(^|[^a-zA-Z0-9._])/usr([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/usr\2@g" \
-    -e "s@(^|[^a-zA-Z0-9._])/sbin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/sbin\2@g" \
+    -e "s@(^|[^a-zA-Z0-9._])/var([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/var\2@g" \
     -e "ta"
 
 sed -i "s|ln sh a|cp sh a|g" rsh2.sub
