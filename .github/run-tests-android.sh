@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-cd /tests
+cd /home/tests
 
 ls -la /
 
@@ -10,6 +10,6 @@ export PATH=/bin:$PATH
 export TMPDIR=/tmp
 export THIS_SH=/bin/bash
 export USER=shell
-export HOME=/tmp
+export HOME=/home
 
 /usr/bin/su -p -s /bin/bash shell -c "export PATH=/bin:\$PATH; export TMPDIR=/tmp; export THIS_SH=/bin/bash; /bin/bash run-all < /dev/null"

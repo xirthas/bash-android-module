@@ -180,9 +180,9 @@ jobs:
             adb shell chmod 755 /data/local/tmp/fake_root/usr/bin/bash /data/local/tmp/fake_root/usr/bin/recho /data/local/tmp/fake_root/usr/bin/zecho /data/local/tmp/fake_root/usr/bin/printenv /data/local/tmp/fake_root/usr/bin/xcase
 
             # 5. Загружаем тесты и запускающий их скрипт
-            adb shell mkdir -p /data/local/tmp/fake_root/tests
-            adb push tests /data/local/tmp/fake_root/
-            adb shell chmod -R 777 /data/local/tmp/fake_root/tests
+            adb shell mkdir -p /data/local/tmp/fake_root/home/tests
+            adb push tests /data/local/tmp/fake_root/home/
+            adb shell chmod -R 777 /data/local/tmp/fake_root/home/tests
 
             # Пушим сам run-tests-android.sh в корень chroot среды
             adb push .github/run-tests-android.sh /data/local/tmp/fake_root/run-tests-android.sh

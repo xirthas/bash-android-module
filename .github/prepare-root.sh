@@ -24,6 +24,7 @@ mkdir -p /data/local/tmp/fake_root/usr/bin
 mkdir -p /data/local/tmp/fake_root/bin
 mkdir -p /data/local/tmp/fake_root/sbin
 mkdir -p /data/local/tmp/fake_root/etc
+mkdir -p /data/local/tmp/fake_root/home
 mkdir -p /data/local/tmp/fake_root/tmp
 mkdir -p /data/local/tmp/fake_root/var
 
@@ -36,6 +37,7 @@ mkdir -p /data/local/tmp/fake_root/sys
 chmod 755 /data/local/tmp/fake_root/usr
 chmod 755 /data/local/tmp/fake_root/usr/bin
 chmod 755 /data/local/tmp/fake_root/etc
+chmod 777 /data/local/tmp/fake_root/home
 chmod 777 /data/local/tmp/fake_root/tmp
 chmod 755 /data/local/tmp/fake_root/var
 
