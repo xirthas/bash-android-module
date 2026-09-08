@@ -3,7 +3,7 @@ set -e
 cd /data/local/tmp/tests
 
 find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.right" -o -name "execscript" -o -name "history.list" \) \
-    -not -name 'array*.*' -not -name 'assoc*.*' -not -name 'new-exp*.*' | xargs sed -i -E \
+    -not -name 'array*.*' -not -name 'assoc*.*' -not -name 'new-exp*.*' -not -name 'histexp*.*' | xargs sed -i -E \
     -e ":a" \
     -e "s@(^|[^a-zA-Z0-9._])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" \
     -e "s@(^|[^a-zA-Z0-9._])/bin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/bin\2@g" \
