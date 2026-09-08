@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 set -e
 
 # 1. АВТОПОВТОР СИСТЕМНОГО КОРНЯ В FAKE_ROOT

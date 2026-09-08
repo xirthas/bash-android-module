@@ -161,7 +161,7 @@ jobs:
             # 2. Пушим и запускаем наш скрипт подготовки корня внутри Android
             adb push .github/prepare-root.sh /data/local/tmp/prepare-root.sh
             adb shell chmod 755 /data/local/tmp/prepare-root.sh
-            adb shell /data/local/tmp/prepare-root.sh
+            adb shell /system/bin/sh /data/local/tmp/prepare-root.sh
             adb shell rm -f /data/local/tmp/prepare-root.sh
 
             # 3. Загружаем BusyBox напрямую в изолированный /usr/bin/
