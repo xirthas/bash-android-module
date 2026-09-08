@@ -153,17 +153,20 @@ jobs:
             #curl -sL -o busybox https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
             cp .github/bin/busybox-1.35.0-x86_64-linux-musl ./busybox
 
+            # Set SELinux to permissive
             adb root
             adb wait-for-device
             adb shell setenforce 0
             adb unroot
             adb wait-for-device
 
+            # Create temp folder structure
             adb shell mkdir -p /data/local/tmp/bin
             adb shell mkdir -p /data/local/tmp/etc
             adb shell mkdir -p /data/local/tmp/usr
             adb shell mkdir -p /data/local/tmp/sbin
 
+            # Push bin and tests
             adb push busybox /data/local/tmp/bin/
             adb shell chmod 755 /data/local/tmp/bin/busybox
             adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
@@ -176,17 +179,7 @@ jobs:
             adb push bash-bin/xcase /data/local/tmp/bin/
             adb shell chmod 755 /data/local/tmp/bin/bash /data/local/tmp/bin/recho /data/local/tmp/bin/zecho /data/local/tmp/bin/printenv /data/local/tmp/bin/xcase
 
-            adb shell 'cd /data/local/tmp/tests && find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.right" -o -name "execscript" -o -name "history.list" \) ! -name "array.right" ! -name "array.tests" ! -name "assoc.right" ! -name "assoc.tests" | xargs sed -i -E \
-              -e "s@(^|[^a-zA-Z0-9._-])/tmp([^a-zA-Z0-9._]|$)@\1/data/local/tmp\2@g" -e "s@(^|[^a-zA-Z0-9._])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" \
-              -e "s@(^|[^a-zA-Z0-9._-])/bin([^a-zA-Z0-9._]|$)@\1/data/local/tmp/bin\2@g" -e "s@(^|[^a-zA-Z0-9._])/bin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/bin\2@g" \
-              -e "s@(^|[^a-zA-Z0-9._-])/etc([^a-zA-Z0-9._]|$)@\1/data/local/tmp/etc\2@g" -e "s@(^|[^a-zA-Z0-9._])/etc([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/etc\2@g" \
-              -e "s@(^|[^a-zA-Z0-9._-])/usr([^a-zA-Z0-9._]|$)@\1/data/local/tmp/usr\2@g" -e "s@(^|[^a-zA-Z0-9._])/usr([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/usr\2@g" \
-              -e "s@(^|[^a-zA-Z0-9._-])/sbin([^a-zA-Z0-9._]|$)@\1/data/local/tmp/sbin\2@g" -e "s@(^|[^a-zA-Z0-9._])/sbin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/sbin\2@g"'
-
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/data/local/tmp/usr/bin/printf|/data/local/tmp/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
-
-            adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/etc/passwd'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|ln sh a|cp sh a|g" rsh2.sub'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|\[\[ x =~ \\\${bs}x \]\] ; echo \\\$?|[[ x =~ x ]] ; echo \$?|g" cond-regexp3.sub'
-
-            adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; export THIS_SH=/data/local/tmp/bin/bash; cd /data/local/tmp/tests && ${THIS_SH} run-all' < /dev/null
+            # Push and run script
+            adb push .github/run-tests-android.sh /data/local/tmp/
+            adb shell chmod 755 /data/local/tmp/run-tests-android.sh
+            adb shell /data/local/tmp/run-tests-android.sh < /dev/null
