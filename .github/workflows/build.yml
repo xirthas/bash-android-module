@@ -210,7 +210,8 @@ jobs:
             # 9. Загружаем тесты и запускающий скрипт внутрь изолированной среды
             adb shell mkdir -p /data/local/tmp/fake_root/tests
             adb push tests /data/local/tmp/fake_root/
-            
+            adb shell chmod -R 777 /data/local/tmp/fake_root/tests
+
             # Сам запускаемый скрипт кладем в корень изолированной среды
             adb push .github/run-tests-android.sh /data/local/tmp/fake_root/run-tests-android.sh
             adb shell chmod 755 /data/local/tmp/fake_root/run-tests-android.sh

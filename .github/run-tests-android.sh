@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-cd /data/local/tmp/tests
+cd /tests
 
 ls -la /
 
