@@ -2,22 +2,21 @@
 set -e
 cd /data/local/tmp/tests
 
-find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.right" -o -name "execscript" -o -name "history.list" \) | xargs sed -i -E \
-    -e "s@(^|[^a-zA-Z0-9._])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" \
-    -e "s@(^|[^a-zA-Z0-9._])/bin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/bin\2@g" \
-    -e "s@(^|[^a-zA-Z0-9._])/etc([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/etc\2@g" \
-    -e "s@(^|[^a-zA-Z0-9._])/usr([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/usr\2@g" \
-    -e "s@(^|[^a-zA-Z0-9._])/sbin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/sbin\2@g"
+ln /data/local/tmp/tmp /tmp
+ln /data/local/tmp/bin /bin
+ln /data/local/tmp/etc /etc
+ln /data/local/tmp/usr /usr
+ln /data/local/tmp/sbin /sbin
 
-sed -i "s|/data/local/tmp/usr/bin/printf|/data/local/tmp/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
+sed -i "s|/usr/bin/printf|/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
 
 sed -i "s|ln sh a|cp sh a|g" rsh2.sub
 sed -i 's|\[\[ x =~ \${bs}x \]\] ; echo \$?|[[ x =~ x ]] ; echo $?|g' cond-regexp3.sub
 
-echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/etc/passwd
+echo "root:x:0:0:root:/root:/bin/sh" > /etc/passwd
 
-export PATH=/data/local/tmp/bin:$PATH
-export TMPDIR=/data/local/tmp
-export THIS_SH=/data/local/tmp/bin/bash
+export PATH=/bin:$PATH
+export TMPDIR=/tmp
+export THIS_SH=/bin/bash
 
 ${THIS_SH} run-all < /dev/null
