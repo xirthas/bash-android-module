@@ -182,4 +182,4 @@ jobs:
             # Push and run script
             adb push .github/run-tests-android.sh /data/local/tmp/
             adb shell chmod 755 /data/local/tmp/run-tests-android.sh
-            adb shell /data/local/tmp/run-tests-android.sh < /dev/null
+            adb shell /data/local/tmp/run-tests-android.sh
