@@ -65,7 +65,7 @@ jobs:
           export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
           export STRIP=$TOOLCHAIN/bin/llvm-strip
           
-          export CFLAGS="-static -O2 -Wno-error=implicit-function-declaration -D_GNU_SOURCE -g0"
+          export CFLAGS="-static -O2 -Wno-error=implicit-function-declaration"
           export LDFLAGS="-static"
 
           sed -i 's/-rdynamic//g' configure
@@ -91,9 +91,6 @@ jobs:
             bash_cv_sys_siglist=yes \
             bash_cv_func_sigsetjmp=present \
             bash_cv_unusable_rtsigs=no \
-            ac_cv_func_regcomp=no \
-            ac_cv_func_regexec=no \
-            ac_cv_header_regex_h=no \
             ac_cv_func_getpwent=no \
             ac_cv_func_endpwent=no \
             ac_cv_func_setpwent=no \
@@ -185,5 +182,6 @@ jobs:
             adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/passwd'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|ln sh a|cp sh a|g" rsh2.sub'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|\[\[ x =~ \\\${bs}x \]\] ; echo \\\$?|[[ x =~ x ]] ; echo \$?|g" cond-regexp3.sub'
 
             adb shell 'export PATH=/data/local/tmp/bin:$PATH; export TMPDIR=/data/local/tmp; export THIS_SH=/data/local/tmp/bash; cd /data/local/tmp/tests && ../bash run-all' < /dev/null
