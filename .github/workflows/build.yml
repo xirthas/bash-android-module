@@ -190,6 +190,7 @@ jobs:
 
             # 6. Записываем passwd внутрь изолированного /etc
             adb shell "echo 'root:x:0:0:root:/root:/bin/sh' > /data/local/tmp/fake_root/etc/passwd"
+            adb shell "echo 'shell:x:2000:2000:shell:/tmp:/bin/sh' >> /data/local/tmp/fake_root/etc/passwd"
             adb shell chmod 644 /data/local/tmp/fake_root/etc/passwd
 
             # 7. Загружаем BusyBox напрямую в изолированный /usr/bin/
