@@ -161,10 +161,10 @@ jobs:
             adb wait-for-device
 
             # Create temp folder structure
-            adb shell mkdir -p /data/local/tmp/bin
+            adb shell mkdir -p /data/local/tmp/usr/bin
+            ln -s /data/local/tmp/usr/bin /data/local/tmp/bin
+            ln -s /data/local/tmp/usr/bin /data/local/tmp/sbin
             adb shell mkdir -p /data/local/tmp/etc
-            adb shell mkdir -p /data/local/tmp/usr
-            adb shell mkdir -p /data/local/tmp/sbin
 
             # Push bin and tests
             adb push busybox /data/local/tmp/bin/

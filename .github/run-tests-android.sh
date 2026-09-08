@@ -12,8 +12,6 @@ find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.
     -e "s@(^|[^a-zA-Z0-9._])/sbin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/sbin\2@g" \
     -e "ta"
 
-sed -i "s|/data/local/tmp/usr/bin/printf|/data/local/tmp/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests
-
 sed -i "s|ln sh a|cp sh a|g" rsh2.sub
 sed -i 's|\[\[ x =~ \${bs}x \]\] ; echo \$?|[[ x =~ x ]] ; echo $?|g' cond-regexp3.sub
 sed -i "s|!?d?:5|!?b c d?:5|g" histexp.tests
