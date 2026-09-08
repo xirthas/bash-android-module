@@ -169,15 +169,15 @@ jobs:
             adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
             adb push tests /data/local/tmp/
 
-            adb shell 'echo "echo # /data/local/tmp/" >> /data/local/tmp/tests/alias6.sub'
+            adb shell 'echo "echo \# /data/local/tmp/" >> /data/local/tmp/tests/alias6.sub'
             adb shell 'echo "ls -la /data/local/tmp/" >> /data/local/tmp/tests/alias6.sub'
-            adb shell 'echo "echo # /data/local/tmp/bin/" >> /data/local/tmp/tests/alias6.sub'
+            adb shell 'echo "echo \# /data/local/tmp/bin/" >> /data/local/tmp/tests/alias6.sub'
             adb shell 'echo "ls -la /data/local/tmp/bin/" >> /data/local/tmp/tests/alias6.sub'
-            adb shell 'echo "echo # /data/local/tmp/etc/" >> /data/local/tmp/tests/alias6.sub'
+            adb shell 'echo "echo \# /data/local/tmp/etc/" >> /data/local/tmp/tests/alias6.sub'
             adb shell 'echo "ls -la /data/local/tmp/etc/" >> /data/local/tmp/tests/alias6.sub'
-            adb shell 'echo "echo # /data/local/tmp/usr/" >> /data/local/tmp/tests/alias6.sub'
+            adb shell 'echo "echo \# /data/local/tmp/usr/" >> /data/local/tmp/tests/alias6.sub'
             adb shell 'echo "ls -la /data/local/tmp/usr/" >> /data/local/tmp/tests/alias6.sub'
-            adb shell 'echo "echo # /data/local/tmp/sbin/" >> /data/local/tmp/tests/alias6.sub'
+            adb shell 'echo "echo \# /data/local/tmp/sbin/" >> /data/local/tmp/tests/alias6.sub'
             adb shell 'echo "ls -la /data/local/tmp/sbin/" >> /data/local/tmp/tests/alias6.sub'
 
             adb push bash-bin/bash /data/local/tmp/
