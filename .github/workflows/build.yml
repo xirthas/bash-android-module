@@ -150,43 +150,36 @@ jobs:
           script: |
             set -e
 
-            # Берём бинарник busybox из репозитория
+            #curl -sL -o busybox https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
             cp .github/bin/busybox-1.35.0-x86_64-linux-musl ./busybox
 
-            # 1. Подготовка устройства и Root-прав
+            # Set SELinux to permissive
             adb root
             adb wait-for-device
             adb shell setenforce 0
+            adb unroot
+            adb wait-for-device
 
-            # 2. Пушим и запускаем наш скрипт подготовки корня внутри Android
-            adb push .github/prepare-root.sh /data/local/tmp/prepare-root.sh
-            adb shell chmod 755 /data/local/tmp/prepare-root.sh
-            adb shell /system/bin/sh /data/local/tmp/prepare-root.sh
-            adb shell rm -f /data/local/tmp/prepare-root.sh
+            # Create temp folder structure
+            adb shell mkdir -p /data/local/tmp/bin
+            adb shell mkdir -p /data/local/tmp/etc
+            adb shell mkdir -p /data/local/tmp/usr
+            adb shell mkdir -p /data/local/tmp/sbin
 
-            # 3. Загружаем BusyBox напрямую в изолированный /usr/bin/
-            adb push busybox /data/local/tmp/fake_root/usr/bin/busybox
-            adb shell chmod 755 /data/local/tmp/fake_root/usr/bin/busybox
-            
-            # Устанавливаем апплеты BusyBox (ls, grep, awk) внутри chroot
-            adb shell "chroot /data/local/tmp/fake_root /usr/bin/busybox --install -s /usr/bin"
+            # Push bin and tests
+            adb push busybox /data/local/tmp/bin/
+            adb shell chmod 755 /data/local/tmp/bin/busybox
+            adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
+            adb push tests /data/local/tmp/
 
-            # 4. Загружаем кастомный Bash и сопутствующие тестовые утилиты
-            adb push bash-bin/bash /data/local/tmp/fake_root/usr/bin/
-            adb push bash-bin/recho /data/local/tmp/fake_root/usr/bin/
-            adb push bash-bin/zecho /data/local/tmp/fake_root/usr/bin/
-            adb push bash-bin/printenv /data/local/tmp/fake_root/usr/bin/
-            adb push bash-bin/xcase /data/local/tmp/fake_root/usr/bin/
-            adb shell chmod 755 /data/local/tmp/fake_root/usr/bin/bash /data/local/tmp/fake_root/usr/bin/recho /data/local/tmp/fake_root/usr/bin/zecho /data/local/tmp/fake_root/usr/bin/printenv /data/local/tmp/fake_root/usr/bin/xcase
+            adb push bash-bin/bash /data/local/tmp/bin/
+            adb push bash-bin/recho /data/local/tmp/bin/
+            adb push bash-bin/zecho /data/local/tmp/bin/
+            adb push bash-bin/printenv /data/local/tmp/bin/
+            adb push bash-bin/xcase /data/local/tmp/bin/
+            adb shell chmod 755 /data/local/tmp/bin/bash /data/local/tmp/bin/recho /data/local/tmp/bin/zecho /data/local/tmp/bin/printenv /data/local/tmp/bin/xcase
 
-            # 5. Загружаем тесты и запускающий их скрипт
-            adb shell mkdir -p /data/local/tmp/fake_root/home/tests
-            adb push tests /data/local/tmp/fake_root/home/
-            adb shell chmod -R 777 /data/local/tmp/fake_root/home/tests
-
-            # Пушим сам run-tests-android.sh в корень chroot среды
-            adb push .github/run-tests-android.sh /data/local/tmp/fake_root/run-tests-android.sh
-            adb shell chmod 755 /data/local/tmp/fake_root/run-tests-android.sh
-
-            # 6. ФИНАЛЬНЫЙ ЗАПУСК ТЕСТОВ (chroot отрабатывает от root, а su внутри скрипта сбросит права)
-            adb shell "chroot /data/local/tmp/fake_root /usr/bin/sh /run-tests-android.sh"
+            # Push and run script
+            adb push .github/run-tests-android.sh /data/local/tmp/
+            adb shell chmod 755 /data/local/tmp/run-tests-android.sh
+            adb shell /data/local/tmp/run-tests-android.sh < /dev/null
