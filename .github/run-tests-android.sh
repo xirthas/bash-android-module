@@ -22,6 +22,8 @@ sed -i "s|/bin$|/data/local/tmp/bin|g" histexp.right
 sed -i 's|t1=$(mktemp)||g' shopt1.sub
 sed -i 's|t2=$(mktemp)||g' shopt1.sub
 
+cat shopt1.sub
+
 echo "echo SKIPPED" > run-intl
 
 echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/etc/passwd
