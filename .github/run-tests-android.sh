@@ -2,8 +2,7 @@
 set -e
 cd /data/local/tmp/tests
 
-find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.right" -o -name "execscript" -o -name "history.list" \) \
-    ! -name "array.right" ! -name "array.tests" ! -name "assoc.right" ! -name "assoc.tests" | xargs sed -i -E \
+find . -type f \( -name "run-*" -o -name "*.tests" -o -name "*.sub" -o -name "*.right" -o -name "execscript" -o -name "history.list" \) | xargs sed -i -E \
     -e "s@(^|[^a-zA-Z0-9._])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" \
     -e "s@(^|[^a-zA-Z0-9._])/bin([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/bin\2@g" \
     -e "s@(^|[^a-zA-Z0-9._])/etc([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/etc\2@g" \
