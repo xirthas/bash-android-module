@@ -19,8 +19,7 @@ sed -i 's|!?d?:5|!?b c d?:5|g' histexp.tests
 sed -i "s|/bin/sh|/data/local/tmp/bin/sh|g" histexp.right
 sed -i "s|/bin$|/data/local/tmp/bin|g" histexp.right
 
-sed -i 's|t1=$(mktemp)||g' shopt1.sub
-sed -i 's|t2=$(mktemp)||g' shopt1.sub
+sed -i 's|<("$t1") <("$t2")|"$t1" "$t2"|g' shopt1.sub
 
 cat shopt1.sub
 
