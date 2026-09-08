@@ -91,6 +91,7 @@ jobs:
             bash_cv_sys_siglist=yes \
             bash_cv_func_sigsetjmp=present \
             bash_cv_unusable_rtsigs=no \
+            bash_cv_regex_malloc=yes \
             ac_cv_func_getpwent=no \
             ac_cv_func_endpwent=no \
             ac_cv_func_setpwent=no \
