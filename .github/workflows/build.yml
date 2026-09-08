@@ -160,6 +160,9 @@ jobs:
             adb wait-for-device
 
             adb shell mkdir -p /data/local/tmp/bin
+            adb shell mkdir -p /data/local/tmp/etc
+            adb shell mkdir -p /data/local/tmp/usr
+
             adb push busybox /data/local/tmp/bin/
             adb shell chmod 755 /data/local/tmp/bin/busybox
             adb shell '/data/local/tmp/bin/busybox --install -s /data/local/tmp/bin'
@@ -180,14 +183,15 @@ jobs:
             adb shell chmod 755 /data/local/tmp/tests/bash /data/local/tmp/tests/recho /data/local/tmp/tests/zecho /data/local/tmp/tests/printenv /data/local/tmp/tests/xcase
 
             adb shell 'cd /data/local/tmp/tests && sed -i -E -e "s@(^|[^a-zA-Z0-9._-])/tmp([^a-zA-Z0-9._]|$)@\1/data/local/tmp\2@g" -e "s@(^|[^a-zA-Z0-9._])/tmp([^a-zA-Z0-9._-]|$)@\1/data/local/tmp\2@g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i -E -e "s@(^|[^a-zA-Z0-9._-])/etc([^a-zA-Z0-9._]|$)@\1/data/local/tmp/etc\2@g" -e "s@(^|[^a-zA-Z0-9._])/etc([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/etc\2@g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i -E -e "s@(^|[^a-zA-Z0-9._-])/usr([^a-zA-Z0-9._]|$)@\1/data/local/tmp/usr\2@g" -e "s@(^|[^a-zA-Z0-9._])/usr([^a-zA-Z0-9._-]|$)@\1/data/local/tmp/usr\2@g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/sh|/system/bin/sh|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/echo|/data/local/tmp/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/rm|/data/local/tmp/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/cat|/data/local/tmp/bin/cat|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/usr/bin/printf|/system/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
 
-            adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/passwd'
-            adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/etc/passwd'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|ln sh a|cp sh a|g" rsh2.sub'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|\[\[ x =~ \\\${bs}x \]\] ; echo \\\$?|[[ x =~ x ]] ; echo \$?|g" cond-regexp3.sub'
 
