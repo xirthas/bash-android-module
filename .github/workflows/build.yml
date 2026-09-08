@@ -160,6 +160,8 @@ jobs:
             adb unroot
             adb wait-for-device
 
+            adb shell ls -la /
+
             # Create temp folder structure
             adb shell mkdir -p /data/local/tmp/tmp
             adb shell mkdir -p /data/local/tmp/bin
