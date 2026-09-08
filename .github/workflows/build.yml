@@ -215,13 +215,7 @@ jobs:
             adb push .github/run-tests-android.sh /data/local/tmp/fake_root/run-tests-android.sh
             adb shell chmod 755 /data/local/tmp/fake_root/run-tests-android.sh
 
-            # 10. unroot для запуска тестов
-            adb unroot
-            adb wait-for-device
-
-            adb shell "chroot /data/local/tmp/fake_root /usr/bin/ls -la /"
-
-            # 11. ЗАПУСК ТЕСТОВ
+            # 10. ЗАПУСК ТЕСТОВ
             # Команда chroot заставляет Android считать папку fake_root корнем "/"
             # Скрипт run-tests-android.sh увидит идеальную ПК-структуру: /bin/bash, /etc/passwd и т.д.
             adb shell "chroot /data/local/tmp/fake_root /usr/bin/sh /run-tests-android.sh"

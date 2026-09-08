@@ -2,6 +2,8 @@
 set -e
 cd /data/local/tmp/tests
 
+ls -la /
+
 sed -i 's|\[\[ x =~ \${bs}x \]\] ; echo \$?|[[ x =~ x ]] ; echo $?|g' cond-regexp3.sub
 
 export PATH=/bin:$PATH
