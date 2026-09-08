@@ -18,6 +18,7 @@ sed -i "s|ln sh a|cp sh a|g" rsh2.sub
 sed -i 's|\[\[ x =~ \${bs}x \]\] ; echo \$?|[[ x =~ x ]] ; echo $?|g' cond-regexp3.sub
 sed -i "s|!?d?:5|!?b c d?:5|g" histexp.tests
 sed -i "s|/bin/sh|/data/local/tmp/bin/sh|g" histexp.right
+sed -i "s|/bin$|/data/local/tmp/bin|g" histexp.right
 
 echo "echo SKIPPED" > run-intl
 
