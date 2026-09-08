@@ -184,6 +184,7 @@ jobs:
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/echo|/data/local/tmp/bin/echo|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/rm|/data/local/tmp/bin/rm|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/bin/cat|/data/local/tmp/bin/cat|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
+            adb shell 'cd /data/local/tmp/tests && sed -i "s|/usr/bin/printf|/system/bin/printf|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
 
             adb shell 'echo "root:x:0:0:root:/root:/bin/sh" > /data/local/tmp/passwd'
             adb shell 'cd /data/local/tmp/tests && sed -i "s|/etc/passwd|/data/local/tmp/passwd|g" run-* *.tests *.sub *.right execscript history.list misc/*.tests'
