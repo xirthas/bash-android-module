@@ -156,6 +156,8 @@ jobs:
             adb root
             adb wait-for-device
             adb shell setenforce 0
+            adb unroot
+            adb wait-for-device
 
             adb shell mkdir -p /data/local/tmp/bin
             adb push busybox /data/local/tmp/bin/
