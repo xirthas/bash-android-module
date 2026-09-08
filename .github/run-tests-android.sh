@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/bin/sh
 set -e
 cd /data/local/tmp/tests
 

@@ -158,67 +158,70 @@ jobs:
             adb wait-for-device
             adb shell setenforce 0
 
-            # 2. ОБХОД READ-ONLY: Монтируем tmpfs поверх корня /
-            # Это сделает корень временно перезаписываемым в оперативной памяти устройства
-            adb shell mount -t tmpfs tmpfs /
-            
-            # Восстанавливаем базовые системные папки Android в памяти, чтобы adb не отвалился
-            adb shell mkdir -p /dev /proc /sys /data /system
-            adb shell mount --move /dev /dev || true
-            adb shell mount --move /proc /proc || true
-            adb shell mount --move /sys /sys || true
-
-            # 3. Создаем физические папки структуры ПК в fake_root
+            # 2. Создаем изолированную структуру в fake_root
             adb shell mkdir -p /data/local/tmp/fake_root/usr/bin
+            adb shell mkdir -p /data/local/tmp/fake_root/bin
+            adb shell mkdir -p /data/local/tmp/fake_root/sbin
             adb shell mkdir -p /data/local/tmp/fake_root/etc
             adb shell mkdir -p /data/local/tmp/fake_root/tmp
             adb shell mkdir -p /data/local/tmp/fake_root/var
+            
+            # Системные папки ядра, необходимые для работы bash/busybox
+            adb shell mkdir -p /data/local/tmp/fake_root/dev
+            adb shell mkdir -p /data/local/tmp/fake_root/proc
+            adb shell mkdir -p /data/local/tmp/fake_root/sys
 
-            # 4. Выставляем разрешения (chmod)
+            # 3. Выставляем права доступа
             adb shell chmod 755 /data/local/tmp/fake_root/usr
             adb shell chmod 755 /data/local/tmp/fake_root/usr/bin
             adb shell chmod 755 /data/local/tmp/fake_root/etc
             adb shell chmod 777 /data/local/tmp/fake_root/tmp
             adb shell chmod 755 /data/local/tmp/fake_root/var
 
-            # 5. Создаем символические ссылки в корне
-            adb shell ln -s /data/local/tmp/fake_root/usr/bin /bin
-            adb shell ln -s /data/local/tmp/fake_root/usr/bin /sbin
-            adb shell ln -s /data/local/tmp/fake_root/etc /etc
-            adb shell ln -s /data/local/tmp/fake_root/tmp /tmp
-            adb shell ln -s /data/local/tmp/fake_root/usr /usr
-            adb shell ln -s /data/local/tmp/fake_root/var /var
+            # 4. Монтируем виртуальные окружения Android внутрь нашего chroot
+            # Без этого внутри chroot не будут работать базовые функции ОС
+            adb shell mount -t devtmpfs udev /data/local/tmp/fake_root/dev || adb shell mount --bind /dev /data/local/tmp/fake_root/dev
+            adb shell mount -t proc proc /data/local/tmp/fake_root/proc
+            adb shell mount -t sysfs sysfs /data/local/tmp/fake_root/sys
 
-            # 6. Записываем passwd
-            adb shell "echo 'root:x:0:0:root:/root:/bin/sh' > /etc/passwd"
-            adb shell chmod 644 /etc/passwd
+            # 5. Создаем СИМВОЛИЧЕСКИЕ ссылки внутри изолированного корня
+            # Переходим в директорию fake_root, чтобы ссылки создались относительно неё
+            adb shell "cd /data/local/tmp/fake_root && rm -rf bin sbin && ln -s usr/bin bin && ln -s usr/bin sbin"
 
-            # 7. Загружаем BusyBox напрямую в /bin (через fake_root)
+            # 6. Записываем passwd внутрь изолированного /etc
+            adb shell "echo 'root:x:0:0:root:/root:/bin/sh' > /data/local/tmp/fake_root/etc/passwd"
+            adb shell chmod 644 /data/local/tmp/fake_root/etc/passwd
+
+            # 7. Загружаем BusyBox напрямую в изолированный /usr/bin/
             adb push busybox /data/local/tmp/fake_root/usr/bin/busybox
-            adb shell chmod 755 /bin/busybox
+            adb shell chmod 755 /data/local/tmp/fake_root/usr/bin/busybox
             
-            # Устанавливаем все стандартные Linux утилиты (ls, cd, awk, sed, grep и т.д.) в /bin
-            adb shell '/bin/busybox --install -s /bin'
+            # Устанавливаем все стандартные утилиты Linux (ls, grep, awk) внутри chroot
+            adb shell "chroot /data/local/tmp/fake_root /usr/bin/busybox --install -s /usr/bin"
 
-            # 8. Загружаем Bash и тестовые бинарники в /bin
+            # 8. Загружаем Bash и тестовые бинарники в изолированный /usr/bin/
             adb push bash-bin/bash /data/local/tmp/fake_root/usr/bin/
             adb push bash-bin/recho /data/local/tmp/fake_root/usr/bin/
             adb push bash-bin/zecho /data/local/tmp/fake_root/usr/bin/
             adb push bash-bin/printenv /data/local/tmp/fake_root/usr/bin/
             adb push bash-bin/xcase /data/local/tmp/fake_root/usr/bin/
-            
-            # Делаем исполняемыми
-            adb shell chmod 755 /bin/bash /bin/recho /bin/zecho /bin/printenv /bin/xcase
+            adb shell chmod 755 /data/local/tmp/fake_root/usr/bin/bash /data/local/tmp/fake_root/usr/bin/recho /data/local/tmp/fake_root/usr/bin/zecho /data/local/tmp/fake_root/usr/bin/printenv /data/local/tmp/fake_root/usr/bin/xcase
 
-            # 9. Загружаем тесты и запускающий скрипт
-            adb push tests /data/local/tmp/
-            adb push .github/run-tests-android.sh /data/local/tmp/
-            adb shell chmod 755 /data/local/tmp/run-tests-android.sh
+            # 9. Загружаем тесты и запускающий скрипт внутрь изолированной среды
+            adb shell mkdir -p /data/local/tmp/fake_root/tests
+            adb push tests /data/local/tmp/fake_root/
+            
+            # Сам запускаемый скрипт кладем в корень изолированной среды
+            adb push .github/run-tests-android.sh /data/local/tmp/fake_root/run-tests-android.sh
+            adb shell chmod 755 /data/local/tmp/fake_root/run-tests-android.sh
 
             # 10. unroot для запуска тестов
             adb unroot
             adb wait-for-device
 
-            adb shell ls -la /
+            adb shell "chroot /data/local/tmp/fake_root /usr/bin/ls -la /"
 
-            adb shell "/data/local/tmp/run-tests-android.sh" < /dev/null
+            # 11. ЗАПУСК ТЕСТОВ
+            # Команда chroot заставляет Android считать папку fake_root корнем "/"
+            # Скрипт run-tests-android.sh увидит идеальную ПК-структуру: /bin/bash, /etc/passwd и т.д.
+            adb shell "chroot /data/local/tmp/fake_root /usr/bin/sh /run-tests-android.sh"
