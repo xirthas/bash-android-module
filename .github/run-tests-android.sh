@@ -18,7 +18,8 @@ sed -i 's|\[\[ x =~ \${bs}x \]\] ; echo \$?|[[ x =~ x ]] ; echo $?|g' cond-regex
 sed -i 's|!?d?:5|!?b c d?:5|g' histexp.tests
 sed -i "s|/bin/sh|/data/local/tmp/bin/sh|g" histexp.right
 sed -i "s|/bin$|/data/local/tmp/bin|g" histexp.right
-sed -i 's|diff <("$t1") <("$t2")|env TMPDIR=$TMPDIR diff <("$t1") <("$t2")|g' shopt1.sub
+sed -i 's|t1=$(mktemp)|export TMPDIR\n\nt1=$(mktemp)|g' shopt1.sub
+sed -i 's|diff <("$t1") <("$t2")|TMPDIR=$TMPDIR diff <("$t1") <("$t2")|g' shopt1.sub
 
 echo "echo SKIPPED" > run-intl
 
