@@ -9,5 +9,7 @@ sed -i 's|\[\[ x =~ \${bs}x \]\] ; echo \$?|[[ x =~ x ]] ; echo $?|g' cond-regex
 export PATH=/bin:$PATH
 export TMPDIR=/tmp
 export THIS_SH=/bin/bash
+export USER=shell
+export HOME=/tmp
 
-${THIS_SH} run-all < /dev/null
+/usr/bin/su shell /bin/env PATH="$PATH" TMPDIR="$TMPDIR" THIS_SH="$THIS_SH" USER="$USER" HOME="$HOME" ${THIS_SH} run-all < /dev/null
