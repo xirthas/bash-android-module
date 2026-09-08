@@ -165,6 +165,8 @@ jobs:
             adb shell ln -s /data/local/tmp/usr/bin /data/local/tmp/bin
             adb shell ln -s /data/local/tmp/usr/bin /data/local/tmp/sbin
             adb shell mkdir -p /data/local/tmp/etc
+            adb shell mkdir -p /data/local/tmp/var/empty
+            adb shell mkdir -p /data/local/tmp/var/tmp
 
             # Push bin and tests
             adb push busybox /data/local/tmp/bin/
