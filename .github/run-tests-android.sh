@@ -12,4 +12,4 @@ export THIS_SH=/bin/bash
 export USER=shell
 export HOME=/tmp
 
-/usr/bin/su shell /bin/env PATH="$PATH" TMPDIR="$TMPDIR" THIS_SH="$THIS_SH" USER="$USER" HOME="$HOME" ${THIS_SH} run-all < /dev/null
+/usr/bin/su -p shell /bin/bash -c "export PATH=/bin:\$PATH; export TMPDIR=/tmp; export THIS_SH=/bin/bash; /bin/bash run-all < /dev/null"
